@@ -12,7 +12,7 @@ const dreamsList = document.getElementById("dreams");
 const clearButton = document.querySelector('#clear-dreams');
 
 // request the dreams from our app's sqlite database
-fetch("/dreams", {})
+fetch("/api/dreams", {})
   .then(res => res.json())
   .then(response => {
     response.forEach(row => {
@@ -34,7 +34,7 @@ dreamsForm.onsubmit = event => {
 
   const data = { dream: dreamInput.value };
 
-  fetch("/dreams", {
+  fetch("/api/dreams", {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" }
