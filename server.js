@@ -21,14 +21,14 @@ const db = new sqlite3.Database(dbFile);
 db.serialize(() => {
   if (!exists) {
     db.run(
-      "CREATE TABLE Dreams (id INTEGER PRIMARY KEY AUTOINCREMENT, dream TEXT)"
+      "CREATE TABLE Dreams (id INTEGER PRIMARY KEY AUTOINCREMENT, dream TEXT, achieved INTEGER)"
     );
     console.log("New table Dreams created!");
 
     // insert default dreams
     db.serialize(() => {
       db.run(
-        'INSERT INTO Dreams (dream) VALUES ("Find and count some sheep"), ("Climb a really tall mountain"), ("Wash the dishes")'
+        'INSERT INTO Dreams (dream, achieved) VALUES ("Find and count some sheep", 0), ("Climb a really tall mountain", 0), ("Wash the dishes", 0)'
       );
     });
   } else {
@@ -59,9 +59,20 @@ app.get("/api/dreams/:id", (request, response) => {
   });
 });
 
-// update dream
-app.put("/api/dreams/:id", (request, response) => {
-  // TODO
+// achieve dream by id
+app.put("/api/dreams/:id/achieve", (request, response) => {
+  if (request.params.id) {
+    db.run("UPDATE Dreams SET achieved = 1 WHERE id = ?", request.params.id, function(err) {
+      if(this.changes > 0) {
+        response.sendStatus(200);
+      } else {
+        response.sendStatus(404);
+      }
+    });
+  } else {
+    response.sendStatus(400);
+  }
+  
 });
 
 // endpoint to add a dream to the database
@@ -79,6 +90,7 @@ const cleanseString = function(string) {
 };
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, () => {
+const port = 46227
+var listener = app.listen(port, () => {
   console.log(`Your app is listening on port ${listener.address().port}`);
 });

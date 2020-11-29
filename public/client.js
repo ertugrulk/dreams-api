@@ -16,14 +16,14 @@ fetch("/api/dreams", {})
   .then(res => res.json())
   .then(response => {
     response.forEach(row => {
-      appendNewDream(row.dream);
+      appendNewDream(row.dream, row.achieved);
     });
   });
 
 // a helper function that creates a list item for a given dream
-const appendNewDream = dream => {
+const appendNewDream = (dream, achieved) => {
   const newListItem = document.createElement("li");
-  newListItem.innerText = dream;
+  newListItem.innerText = dream + (achieved === 1 ? " ACHIEVED!" : "");
   dreamsList.appendChild(newListItem);
 };
 
@@ -45,7 +45,7 @@ dreamsForm.onsubmit = event => {
     });
   // get dream value and add it to the list
   dreams.push(dreamInput.value);
-  appendNewDream(dreamInput.value);
+  appendNewDream(dreamInput.value, false);
 
   // reset form
   dreamInput.value = "";
